@@ -1,0 +1,26 @@
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Secrets
+.env
+**/.env
+
+# Local database and logs
+*.db
+*.sqlite
+*.sqlite3
+*.log
+
+# Expo generated files
+**/.expo/
+
+# Node dependencies
+**/node_modules/
+
+# Editor and OS files
+.vscode/
+.DS_Store

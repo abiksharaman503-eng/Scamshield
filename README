@@ -1,0 +1,48 @@
+# ScamShield AI
+
+Detect → Explain → Assess exposure → Recover → Report → Prevent
+
+## Run the backend
+```bash
+cd backend
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+# OCR needs the Tesseract binary: `sudo apt install tesseract-ocr` / `brew install tesseract`
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+Docs at http://localhost:8000/docs. Without a trained model the app runs on its rule engine alone.
+
+## (Optional) Train the ML layer
+Put real data in `ml/dataset/messages.csv` (`text,label`) and `ml/dataset/urls.csv` (`url,label`), then:
+```bash
+cd ml && python train.py
+```
+With no CSVs, `train.py` trains on a tiny seed set just to prove the pipeline works. **Don't ship models trained on it.**
+Blend weights live in `backend/services/risk_engine.py` (rules 60 %, ML 40 %).
+
+## Run the mobile app
+```bash
+cd mobile
+npm install
+cp .env.example .env     # set EXPO_PUBLIC_API_URL to your computer's LAN IP for a physical phone
+npx expo start
+```
+Android emulator reaches the host at `10.0.2.2`; iOS simulator can use `http://localhost:8000`.
+
+## API
+| Method | Path | Purpose |
+|---|---|---|
+| POST | `/api/url/analyze` | `{url}` |
+| POST | `/api/message/analyze` | `{text}` |
+| POST | `/api/screenshot/analyze` | multipart `file` (OCR + QR) |
+| POST | `/api/account/analyze` | profile fields and behaviour flags |
+| POST | `/api/incident/assess` | what the user did → recovery plan |
+| GET | `/api/incident/{id}/report` | evidence pack (Markdown text) |
+| GET/DELETE | `/api/history` | past checks |
+
+## Before you ship (known gaps)
+- **Threat intel:** the URL analyzer is static. Add domain age/WHOIS, blocklists (Google Safe Browsing, PhishTank) and redirect resolution in a sandbox. Never fetch user links from your own server directly.
+- **Reporting directory:** `recovery_engine.REPORTING` holds phone numbers and sites per country. Verify them and review regularly. Some services get renamed.
+- **Privacy:** OTPs, card numbers and 12-digit IDs are redacted before storage. Still add auth, per-user history, retention limits and consent text.
+- **Security:** CORS is open and there is no auth or rate limiting. Fix both before exposing publicly.
+- **Wording:** results say "likely" and show confidence on purpose. Keep it that way to avoid false certainty.

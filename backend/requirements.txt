@@ -1,0 +1,11 @@
+fastapi==0.115.*
+uvicorn[standard]==0.30.*
+python-multipart
+pydantic>=2
+sqlalchemy>=2
+scikit-learn
+joblib
+numpy
+pillow
+pytesseract
+opencv-python-headless

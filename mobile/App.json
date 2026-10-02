@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "ScamShield AI",
+    "slug": "scamshield-ai",
+    "scheme": "scamshield",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "plugins": [
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "ScamShield reads the screenshot you choose so it can check it for scams."
+        }
+      ]
+    ],
+    "android": {
+      "package": "ai.scamshield.app"
+    },
+    "ios": {
+      "bundleIdentifier": "ai.scamshield.app"
+    }
+  }
+}
